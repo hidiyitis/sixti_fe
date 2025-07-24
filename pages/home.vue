@@ -52,7 +52,6 @@ const products = [
         <span class="block text-2xl font-bold text-gray-800 mt-1 flex items-center">Kenali Kriya Indonesia!<span class="ml-1">👋</span></span>
       </h1>
     </div>
-    <BannerMasuk />
     <SearchBar />
     <KategoriKain />
     <div class="mb-4 text-left">
@@ -76,7 +75,7 @@ const products = [
       </h1>
     </div>
     <div class="space-y-4 px-4 py-6">
-    <ProductCard  
+    <ProductCard
       v-for="(item, index) in products"
       :key="index"
       :title="item.title"

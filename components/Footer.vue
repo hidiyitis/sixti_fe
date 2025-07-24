@@ -16,15 +16,16 @@
     </NuxtLink>
 
     <!-- Tombol Scan Tengah -->
-    <button
+    <NuxtLink
+      to="/recogbatik"
       class="absolute left-1/2 -translate-x-1/2 translate-y-[-40%] bottom-[18px] w-[68px] h-[68px] rounded-full bg-neutral-900 flex items-center justify-center shadow-lg z-10"
     >
       <img src="/assets/scanning.svg" alt="Scan" class="w-9 h-9" />
-    </button>
+    </NuxtLink>
 
     <!-- Tombol Profil -->
     <NuxtLink
-      to="/profil"
+      to="/profile"
       class="flex flex-col items-center text-sm font-medium transition"
       :class="{
         'text-gray-900 font-bold': active === 'profile',

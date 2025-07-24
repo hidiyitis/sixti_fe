@@ -16,9 +16,9 @@
 
 <script setup>
 const items = [
-  { label: 'Batik', img: '/assets/batik.jpg', to: '/batik' },
-  { label: 'Tenun', img: '/assets/tenun.jpg', to: '/tenun' },
-  { label: 'Songket', img: '/assets/songket.jpg', to: '/songket' },
+  { label: 'Batik', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFNAIGxBbm_8CiKekcE2UqaVjaou_yI_xbrQ&s', to: '/batik' },
+  { label: 'Tenun', img: 'https://asset.kompas.com/crops/eV3pVhsTUUlB_nffNUO84gOd4UQ=/34x11:951x622/750x500/data/photo/2022/02/28/621c6c100fc46.jpg', to: '/tenun' },
+  { label: 'Songket', img: 'https://disbud.bulelengkab.go.id/uploads/konten/31_kain-songket-buleleng.jpg', to: '/songket' },
 ]
 </script>
 
