@@ -1,15 +1,27 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import ButtonBack from '@/components/ButtonBack.vue'
 import ButtonShare from '@/components/ButtonShare.vue'
 
 const videoRef = ref(null)
 const loading = ref(false)
 const result = ref(null)
+const facingMode = ref('environment') // default kamera belakang
+
+let currentStream = null
 
 const startCamera = async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    // Hentikan stream lama jika ada
+    if (currentStream) {
+      currentStream.getTracks().forEach(track => track.stop())
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode.value }
+    })
+
+    currentStream = stream
     if (videoRef.value) {
       videoRef.value.srcObject = stream
     }
@@ -19,7 +31,11 @@ const startCamera = async () => {
   }
 }
 
-// Tangkap gambar dan convert ke base64 (data:image/jpeg;base64,...)
+const toggleCamera = () => {
+  facingMode.value = facingMode.value === 'user' ? 'environment' : 'user'
+}
+
+// Tangkap gambar dan convert ke base64
 const captureBase64 = () => {
   const video = videoRef.value
   const canvas = document.createElement('canvas')
@@ -27,7 +43,7 @@ const captureBase64 = () => {
   canvas.height = video.videoHeight
   const ctx = canvas.getContext('2d')
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-  return canvas.toDataURL('image/jpeg') // ← hasil base64 lengkap
+  return canvas.toDataURL('image/jpeg')
 }
 
 // Kirim base64 ke Roboflow
@@ -37,15 +53,13 @@ const checkBatik = async () => {
 
   try {
     const base64 = captureBase64()
-    const base64BodyOnly = base64.split(',')[1] // Hapus prefix data:image/jpeg;base64,
+    const base64BodyOnly = base64.split(',')[1]
 
     const axios = (await import('axios')).default
     const { data } = await axios({
       method: 'POST',
       url: 'https://serverless.roboflow.com/motif-batik-idv6s/17',
-      params: {
-        api_key: 'HycjmV1sVakbknQr5SWu',
-      },
+      params: { api_key: 'HycjmV1sVakbknQr5SWu' },
       data: base64BodyOnly,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -65,18 +79,32 @@ const checkBatik = async () => {
 onMounted(() => {
   startCamera()
 })
+
+watch(facingMode, () => {
+  startCamera()
+})
 </script>
 
 <template>
   <section class="min-h-screen max-w-md mx-auto bg-white p-0">
-    <!-- Header dan Kamera -->
+    <!-- Kamera Header -->
     <div class="relative h-[50vh] w-full overflow-hidden">
       <!-- Header -->
       <div class="absolute top-6 left-0 w-full flex items-center justify-between px-4 z-10">
         <ButtonBack />
-        <span class="text-gray-800 font-medium text-base text-center flex-1 -ml-8">Cek Batik</span>
-        <ButtonShare />
+        <!-- <span class="text-gray-800 font-medium text-base text-center flex-1 -ml-8">Cek Batik</span>
+        <ButtonShare /> -->
       </div>
+
+      <!-- Flip Button -->
+      <button
+        @click="toggleCamera"
+        class="absolute top-6 right-4 z-20 bg-white bg-opacity-70 hover:bg-opacity-100 p-2 rounded-full shadow"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M4 4v5h.582a6.002 6.002 0 0111.82 1H18a8 8 0 00-14-6zM16 11v-1h-.582a6.002 6.002 0 01-11.82-1H2a8 8 0 0014 6z" />
+        </svg>
+      </button>
 
       <!-- Kamera -->
       <div class="relative h-[50vh] w-full bg-black">

@@ -34,8 +34,7 @@ const uploadKarya = () => {
   <section class="min-h-screen max-w-md mx-auto bg-white p-4 flex flex-col items-center">
     <!-- Header -->
     <div class="w-full relative flex items-center justify-between mb-4">
-      <ButtonBack />
-      <h1 class="text-base font-medium text-center absolute left-0 right-0 mx-auto w-max">Profile</h1>
+      <h1 class="text-base font-bold text-center absolute left-0 right-0 mx-auto w-max">Profile</h1>
       <ButtonShare />
     </div>
 

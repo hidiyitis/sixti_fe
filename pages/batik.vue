@@ -1,39 +1,36 @@
 <script setup>
 import ButtonBack from '@/components/ButtonBack.vue'
 import BatikCard from '@/components/BatikCard.vue'
+import axios from 'axios'
 
-const batikList = [
-  {
-    nama: 'Batik Megamendung',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/megamendung.jpg',
-  },
-  {
-    nama: 'Batik Sido Asih',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/sidoasih.jpg',
-  },
-  {
-    nama: 'Batik Sogan',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/sogan.jpg',
-  },
-  {
-    nama: 'Batik Kawung',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/kawung.jpg',
-  },
-  {
-    nama: 'Batik Parang',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/parang.jpg',
-  },
-  {
-    nama: 'Batik Sekar Jagad',
-    lokasi: 'DIY Yogyakarta',
-    image: '/images/sekarjagad.jpg',
-  },
-]
+// State untuk data batik (dari API)
+const batikList = ref([])
+
+// Fetch data dari endpoint API
+const fetchBatikList = async () => {
+  try {
+    const response = await axios.get(
+      'https://ragam-backend-836115399739.asia-southeast2.run.app/api/v1/kriyas?limit=6'
+    )
+
+    const data = response.data.data
+
+    // Mapping agar sesuai dengan kebutuhan <BatikCard />
+    batikList.value = data.map((item) => ({
+      nama: item.title,
+      lokasi: item.from,
+      image: item.photos?.[0]?.url || 'https://via.placeholder.com/150'
+    }))
+  } catch (error) {
+    console.error('Gagal fetch data batik:', error)
+  }
+}
+
+// Panggil saat mounted
+onMounted(() => {
+  fetchBatikList()
+})
+
 </script>
 
 <template>

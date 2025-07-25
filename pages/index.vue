@@ -1,46 +1,67 @@
 <script setup>
-// Import komponen kartu
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+// Import komponen
 import SearchBar from '@/components/SearchBar.vue'
 import KategoriKain from '@/components/KategoriKain.vue'
 import BannerMasuk from '@/components/BannerMasuk.vue'
 import BatikCard from '@/components/BatikCard.vue'
 import Footer from '@/components/Footer.vue'
+import ProductCard from '@/components/ProductCard.vue'
 
-const batikList = [
-  {
-    nama: 'Batik Sido Asih',
-    lokasi: 'DIY Yogyakarta',
-    image: 'https://www.batikprabuseno.com/artikel/wp-content/uploads/2022/12/ugugu-01.png',
-  },
-  {
-    nama: 'Batik Parang Kusumo',
-    lokasi: 'Solo',
-    image: 'https://static.cdntap.com/tap-assets-prod/wp-content/uploads/sites/24/2021/10/batik-parang-f-batik-indonesia.jpg',
-  },
-]
+// State untuk data batik (dari API)
+const batikList = ref([])
+const products = ref([])
 
-const products = [
-  {
-    title: 'Paket Membatik',
-    minPrice: 145000,
-    maxPrice: 180000,
-    image: 'https://www.rinso.com/images/h0nadbhvm6m4/17RmARrAatDIJ0x2DxsGSc/68f28770f0815e43ef8408c6751dcefb/MDIuX1JpbnNvX09rdG9iZXJfSGVhZGVyLmpwZw/1000w-668h/pembatik-pemula.jpg',
-  },
-  {
-    title: 'Paket Menenun',
-    minPrice: 95000,
-    maxPrice: 125000,
-    image: 'https://bcaf.telkomuniversity.ac.id/wp-content/uploads/2024/09/AdobeStock_335615974_Preview.jpeg',
-  },
-  {
-    title: 'Paket Meyongket',
-    minPrice: 75000,
-    maxPrice: 99000,
-    image: 'https://cdn0-production-images-kly.akamaized.net/aLtYPIfKeiiel2yE9fiQGkYlBms=/0x0/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/2562099/original/018829600_1546383438-rep-yun-songket-4.jpg',
-  },
-]
+// Fetch data dari endpoint API
+const fetchBatikList = async () => {
+  try {
+    const response = await axios.get(
+      'https://ragam-backend-836115399739.asia-southeast2.run.app/api/v1/kriyas?limit=2',
+    )
+
+    const data = response.data.data
+
+    // Mapping agar sesuai dengan kebutuhan <BatikCard />
+    batikList.value = data.map((item) => ({
+      nama: item.title,
+      lokasi: item.from,
+      image: item.photos?.[0]?.url || 'https://via.placeholder.com/150'
+    }))
+  } catch (error) {
+    console.error('Gagal fetch data batik:', error)
+  }
+}
+
+const fetchProducts = async () => {
+  try {
+    const response = await axios.get(
+      'https://ragam-backend-836115399739.asia-southeast2.run.app/api/v1/products?limit=3',
+    )
+    const data = response.data.data
+    // Mapping produk untuk digunakan di komponen ProductCard
+    products.value = data.map((item) => ({
+      title: item.title,
+      image: item.photos?.[0]?.url || 'https://via.placeholder.com/150',
+      price: item.price,
+    }))
+  
+  } catch (error) {
+    console.error('Gagal fetch produk:', error)
+    return []
+  }
+}
+
+// Panggil saat mounted
+onMounted(() => {
+  fetchBatikList(),
+  fetchProducts()
+})
+
 
 </script>
+
   
 
 <template>
@@ -81,8 +102,7 @@ const products = [
       :key="index"
       :title="item.title"
       :image="item.image"
-      :minPrice="item.minPrice"
-      :maxPrice="item.maxPrice"
+      :price="item.price"
     />
   </div>
 
