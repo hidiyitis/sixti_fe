@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import GalleryShare from './GalleryShare.vue' // Pastikan path ini benar sesuai foldermu
+import GalleryShare from './GalleryShare.vue'
 
 defineProps({
   images: {
@@ -18,12 +18,11 @@ defineProps({
 const showDialog = ref(false)
 const selectedItem = ref(null)
 
-// Saat gambar diklik
+// ✅ Saat gambar diklik, data dikirim ke dialog
 const handleImageClick = (image) => {
   selectedItem.value = {
-    title: 'Batik Mega Mendung', // TODO: Buat dynamic jika datamu punya title
-    description:
-      'Batik Megamendung berasal dari Cirebon, Jawa Barat, dan dikenal sejak abad ke-17. Motif ini dipengaruhi budaya Tionghoa dan memiliki filosofi mendalam tentang ketenangan dalam menghadapi perubahan.',
+    title: 'Batik Mega Mendung', // 🔥 Bisa dynamic jika ada data title
+    description: 'Batik Megamendung berasal dari Cirebon, Jawa Barat, dan dikenal sejak abad ke-17. Motif ini dipengaruhi budaya Tionghoa dan memiliki filosofi mendalam tentang ketenangan dalam menghadapi perubahan.',
     image: image
   }
   showDialog.value = true
@@ -32,7 +31,7 @@ const handleImageClick = (image) => {
 
 <template>
   <div class="bg-white rounded-2xl p-4 space-y-4">
-    <!-- Tombol Upload -->
+    <!-- ✅ Tombol Upload -->
     <button
       @click="onUpload"
       class="w-full border border-dashed border-gray-300 rounded-xl py-6 flex items-center justify-center gap-2 text-gray-700 hover:bg-gray-50 transition"
@@ -43,7 +42,7 @@ const handleImageClick = (image) => {
       <span class="font-semibold">Upload Karya</span>
     </button>
 
-    <!-- Galeri Grid -->
+    <!-- ✅ Galeri Grid -->
     <div class="grid grid-cols-2 gap-3">
       <div
         v-for="(img, index) in images"
@@ -60,7 +59,7 @@ const handleImageClick = (image) => {
     </div>
   </div>
 
-  <!-- Dialog Share -->
+  <!-- ✅ Dialog Share -->
   <GalleryShare
     v-if="showDialog"
     :show="showDialog"

@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="fixed bottom-0 left-0 right-0 w-full max-w-[400px] mx-auto h-20 bg-white flex items-end justify-between px-6 shadow-[0_-2px_16px_rgba(0,0,0,0.06)] z-50"
+    class="fixed bottom-0 left-0 right-0 w-full max-w-[420px] mx-auto h-20 bg-white flex items-end justify-between px-6 shadow-[0_-2px_16px_rgba(0,0,0,0.06)] z-50"
   >
     <!-- Tombol Beranda -->
     <NuxtLink

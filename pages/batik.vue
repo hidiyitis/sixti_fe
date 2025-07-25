@@ -17,6 +17,7 @@ const fetchBatikList = async () => {
 
     // Mapping agar sesuai dengan kebutuhan <BatikCard />
     batikList.value = data.map((item) => ({
+      id: item.id,
       nama: item.title,
       lokasi: item.from,
       image: item.photos?.[0]?.url || 'https://via.placeholder.com/150'
@@ -49,6 +50,7 @@ onMounted(() => {
       <BatikCard
         v-for="(batik, i) in batikList"
         :key="i"
+        :id="batik.id"
         :nama="batik.nama"
         :lokasi="batik.lokasi"
         :image="batik.image"

@@ -2,11 +2,13 @@
 import { ref, onMounted, watch } from 'vue'
 import ButtonBack from '@/components/ButtonBack.vue'
 import ButtonShare from '@/components/ButtonShare.vue'
+import { useRouter } from 'vue-router'
 
 const videoRef = ref(null)
 const loading = ref(false)
 const result = ref(null)
 const facingMode = ref('environment') // default kamera belakang
+let idLocal = null
 
 let currentStream = null
 
@@ -50,7 +52,6 @@ const captureBase64 = () => {
 const checkBatik = async () => {
   loading.value = true
   result.value = null
-
   try {
     const base64 = captureBase64()
     const base64BodyOnly = base64.split(',')[1]
@@ -67,7 +68,10 @@ const checkBatik = async () => {
     })
 
     result.value = data
-    console.log('Hasil deteksi:', data)
+    const title = data.predictions[0].class.replace('-',' ')
+    const res = await axios.get(`https://ragam-backend-836115399739.asia-southeast2.run.app/api/v1/kriyas/get-name?title=${title}`)
+    
+    idLocal = res.data?.data?.id
   } catch (err) {
     console.error('Error:', err)
     alert('Gagal mendeteksi batik.')
@@ -83,6 +87,14 @@ onMounted(() => {
 watch(facingMode, () => {
   startCamera()
 })
+
+const router = useRouter()
+const goToDetail = () => {
+  console.log(idLocal);
+  console.log(idLocal);
+  
+  router.push(`detail/${idLocal}`)
+}
 </script>
 
 <template>
@@ -138,7 +150,9 @@ watch(facingMode, () => {
           <span class="text-base font-semibold text-gray-800">{{ result.predictions[0].class }}</span>
           <span class="text-sm text-green-500 font-bold">{{ (result.predictions[0].confidence * 100).toFixed(1) }}%</span>
         </div>
-        <button class="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 text-gray-700">
+        <button class="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 text-gray-700" v-if="idLocal"
+          @click="goToDetail"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>

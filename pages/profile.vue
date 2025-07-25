@@ -7,12 +7,11 @@ import Toggle from '@/components/Toggle.vue'
 import Gallery from '@/components/Gallery.vue'
 import Footer from '@/components/Footer.vue'
 
-// State tab aktif (profile atau gallery)
 const activeTab = ref('profile')
 
 // Dummy user
 const user = {
-  name: 'Marvel S',
+  name: 'SIXTI User',
   avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
 }
 
@@ -24,9 +23,25 @@ const galleryImages = ref([
   'https://upload.wikimedia.org/wikipedia/commons/e/e7/Batik_Indonesia.jpg'
 ])
 
-// Aksi tombol upload
+// 🔥 Ref untuk input file
+const fileInput = ref(null)
+
+// ✅ Fungsi untuk membuka file picker
 const uploadKarya = () => {
-  console.log('Klik upload karya')
+  fileInput.value.click() // trigger file input
+}
+
+// ✅ Saat file dipilih
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      // Tambahkan file yang dipilih ke galleryImages
+      galleryImages.value.push(e.target.result)
+    }
+    reader.readAsDataURL(file)
+  }
 }
 </script>
 
@@ -62,6 +77,15 @@ const uploadKarya = () => {
         :onUpload="uploadKarya"
       />
     </div>
+
+    <!-- ✅ Input file tersembunyi -->
+    <input
+      type="file"
+      ref="fileInput"
+      accept="image/*"
+      class="hidden"
+      @change="handleFileChange"
+    />
   </section>
   <Footer />
 </template>

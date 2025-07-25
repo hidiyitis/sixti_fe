@@ -1,31 +1,44 @@
 <script setup>
-import { toBlob } from 'html-to-image'
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   show: Boolean,
-  item: {
+  data: {
     type: Object,
     default: () => ({})
-  },
-  onClose: Function
+  }
 })
 
+const emit = defineEmits(['close'])
 const cardRef = ref(null)
 
+// ✅ Fungsi download image
 const downloadImage = async () => {
   if (!cardRef.value) return
-  const blob = await toBlob(cardRef.value)
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `${props.item.title || 'galeri'}.png`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+
+  const htmlToImage = await import('html-to-image')
+
+  try {
+    const dataUrl = await htmlToImage.toPng(cardRef.value, {
+      cacheBust: true,
+      useCORS: true,
+      quality: 1
+    })
+
+    // ✅ Buat link download otomatis
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = `${props.data.title || 'galeri'}.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error('❌ Gagal generate gambar:', error)
+    alert('Gagal mengunduh gambar.')
+  }
 }
 
+// Pastikan card render sebelum capture
 watch(() => props.show, async (val) => {
   if (val) await nextTick()
 })
@@ -33,32 +46,38 @@ watch(() => props.show, async (val) => {
 
 <template>
   <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-    <!-- Dialog Box -->
-    <div ref="cardRef" class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-sm w-full">
+    
+    <!-- ✅ Card (klik tombol tetap aktif) -->
+    <div 
+      ref="cardRef" 
+      class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-sm w-full z-50 pointer-events-auto"
+    >
       <div class="p-4">
-        <!-- Logo -->
-        <img src="/" alt="Logo" class="w-20 mb-2" />
+        <!-- ✅ Logo -->
+        <img src="/assets/RAGAM.svg" alt="Logo Ragam" class="w-20 mb-2" />
 
-        <!-- Gambar -->
+        <!-- ✅ Gambar utama -->
         <img
-          :src="item.image"
+          :src="data.image"
           alt="Gambar Batik"
           class="w-full h-64 object-cover rounded-lg mb-4"
         />
 
-        <!-- Judul -->
-        <h2 class="text-lg font-semibold text-gray-900 mb-1">{{ item.title }}</h2>
+        <!-- ✅ Judul -->
+        <h2 class="text-lg font-semibold text-gray-900 mb-1">{{ data.title }}</h2>
 
-        <!-- Deskripsi -->
+        <!-- ✅ Deskripsi -->
         <p class="text-sm text-gray-700 leading-relaxed">
-          {{ item.description }}
+          {{ data.description }}
         </p>
 
-        <!-- Tombol Aksi -->
+        <!-- ✅ Tombol Aksi -->
         <div class="flex justify-between gap-2 mt-4">
           <button class="flex-1 py-2 bg-gray-100 text-gray-800 text-sm font-medium rounded-full">
             Membatik Tulis
           </button>
+
+          <!-- ✅ Tombol Unduh -->
           <button
             @click="downloadImage"
             class="flex-1 py-2 bg-black text-white text-sm font-medium rounded-full flex items-center justify-center gap-1"
@@ -72,11 +91,11 @@ watch(() => props.show, async (val) => {
       </div>
     </div>
 
-    <!-- Overlay clickable area -->
-    <div class="absolute inset-0" @click="onClose"></div>
+    <!-- ✅ Overlay hanya untuk close (tidak menghalangi tombol) -->
+    <div 
+      class="absolute inset-0 z-40 pointer-events-auto" 
+      @click="emit('close')">
+    </div>
+
   </div>
 </template>
-
-<style scoped>
-/* Optional styling */
-</style>

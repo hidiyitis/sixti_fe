@@ -16,7 +16,7 @@ const handleGoogleLogin = async () => {
 
     // Simpan user ke localStorage
     localStorage.setItem('user', JSON.stringify(user))
-    router.push('/home')
+    router.push('/profile')
   } catch (error) {
     console.error('Login Gagal:', error)
   }

@@ -2,20 +2,21 @@
 import { useRouter } from 'vue-router'
 
 defineProps({
+  id: Number,
   title: String,
   image: String,
   price: Number,
 })
 
 const router = useRouter()
-
 function formatPrice(value) {
   return value.toLocaleString('id-ID')
 }
 
 // Navigasi saat tombol ditekan
-const goToPaket = () => {
-  router.push('/paketmembatik')
+
+const goToDetail = (id) => {
+  router.push(`detail-product/${id}`)
 }
 </script>
 
@@ -42,7 +43,7 @@ const goToPaket = () => {
 
     <!-- Tombol Navigasi -->
     <button
-      @click="goToPaket"
+      @click="goToDetail(id)"
       class="bg-gray-100 hover:bg-gray-200 transition rounded-lg p-2 text-gray-700"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,4 +51,5 @@ const goToPaket = () => {
       </svg>
     </button>
   </div>
+
 </template>
