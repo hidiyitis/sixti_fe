@@ -5,7 +5,6 @@ WORKDIR /app
 
 # Copy package files first untuk memanfaatkan layer caching
 COPY package*.json ./
-COPY .npmrc ./
 
 # Install semua dependencies termasuk devDependencies
 RUN npm install
