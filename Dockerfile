@@ -23,7 +23,6 @@ WORKDIR /app
 
 # Install hanya production dependencies
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.npmrc ./
 RUN npm install --production
 
 # Copy hasil build dan file yang diperlukan
